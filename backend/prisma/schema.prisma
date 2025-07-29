@@ -1,0 +1,39 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  name       String
+  password   String
+  role       String
+  expedientes Expediente[] @relation("TecnicoExpedientes")
+}
+
+model Expediente {
+  id            Int        @id @default(autoincrement())
+  fecha         DateTime   @default(now())
+  tecnicoId     Int
+  tecnico       User       @relation("TecnicoExpedientes", fields: [tecnicoId], references: [id])
+  estado        String     @default("PENDIENTE")
+  justificacion String?
+  indicios      Indicio[]
+}
+
+model Indicio {
+  id           Int     @id @default(autoincrement())
+  descripcion  String
+  color        String
+  tamano       String
+  peso         Float
+  ubicacion    String
+  expedienteId Int
+  expediente   Expediente @relation(fields: [expedienteId], references: [id])
+}
