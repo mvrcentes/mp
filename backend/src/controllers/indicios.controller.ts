@@ -1,6 +1,12 @@
 import type { Request, Response } from "express"
 import { prisma } from "../database"
 
+/**
+ * Actualiza un indicio existente y cambia el estado del expediente a "PENDIENTE".
+ * 
+ * @param req - Objeto de solicitud que contiene los parámetros del expediente e indicio, y los nuevos datos del indicio.
+ * @param res - Objeto de respuesta para enviar el resultado de la operación.
+ */
 export const actualizarIndicio = async (req: Request, res: Response) => {
   const idExpediente = parseInt(req.params.idExpediente)
   const idIndicio = parseInt(req.params.idIndicio)
@@ -30,6 +36,12 @@ export const actualizarIndicio = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Elimina un indicio asociado a un expediente y cambia el estado del expediente a "PENDIENTE".
+ * 
+ * @param req - Objeto de solicitud que contiene los parámetros del expediente e indicio.
+ * @param res - Objeto de respuesta para enviar el resultado de la operación.
+ */
 export const eliminarIndicio = async (req: Request, res: Response) => {
   const expedienteId = parseInt(req.params.idExpediente)
   const indicioId = parseInt(req.params.idIndicio)
@@ -53,6 +65,12 @@ export const eliminarIndicio = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Agrega un nuevo indicio a un expediente y cambia el estado del expediente a "PENDIENTE".
+ * 
+ * @param req - Objeto de solicitud que contiene el parámetro del expediente y los datos del nuevo indicio.
+ * @param res - Objeto de respuesta para enviar el resultado de la operación.
+ */
 export const agregarIndicio = async (req: Request, res: Response) => {
   const expedienteId = parseInt(req.params.idExpediente)
   const { descripcion, color, tamano, peso, ubicacion } = req.body

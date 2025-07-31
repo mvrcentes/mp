@@ -1,6 +1,12 @@
 import type { Request, Response } from "express"
 import { prisma } from "../database"
 
+/**
+ * Crea un nuevo expediente con una lista de indicios.
+ * Valida que los indicios sean válidos antes de la inserción.
+ * @param {Request} req - La solicitud HTTP, debe contener los indicios en el cuerpo.
+ * @param {Response} res - La respuesta HTTP con el expediente creado o un error.
+ */
 export const crearExpediente = async (req: Request, res: Response) => {
   const { indicios } = req.body
 
@@ -52,6 +58,11 @@ export const crearExpediente = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Obtiene todos los expedientes con estado "PENDIENTE".
+ * @param {Request} req - La solicitud HTTP.
+ * @param {Response} res - La respuesta HTTP con la lista de expedientes pendientes.
+ */
 export const obtenerExpedientesPendientes = async (
   req: Request,
   res: Response
@@ -82,6 +93,11 @@ export const obtenerExpedientesPendientes = async (
   }
 }
 
+/**
+ * Cambia el estado de un expediente a "APROBADO".
+ * @param {Request} req - La solicitud HTTP con el ID del expediente en los parámetros.
+ * @param {Response} res - La respuesta HTTP con el expediente actualizado.
+ */
 export const aprobarExpediente = async (req: Request, res: Response) => {
   const expedienteId = parseInt(req.params.id)
 
@@ -98,6 +114,11 @@ export const aprobarExpediente = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Cambia el estado de un expediente a "RECHAZADO" con justificación.
+ * @param {Request} req - La solicitud HTTP con el ID del expediente en los parámetros y justificación en el cuerpo.
+ * @param {Response} res - La respuesta HTTP con el expediente actualizado o un error.
+ */
 export const rechazarExpediente = async (req: Request, res: Response) => {
   const expedienteId = parseInt(req.params.id)
   const { justificacion } = req.body
@@ -126,6 +147,11 @@ export const rechazarExpediente = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Obtiene todos los expedientes, filtrando por técnico si es necesario.
+ * @param {Request} req - La solicitud HTTP que puede contener información de usuario autenticado.
+ * @param {Response} res - La respuesta HTTP con la lista de expedientes.
+ */
 export const obtenerExpedientes = async (req: Request, res: Response) => {
   try {
     const filtros =
@@ -155,6 +181,11 @@ export const obtenerExpedientes = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Genera un reporte de expedientes basado en filtros de estado y fechas.
+ * @param {Request} req - La solicitud HTTP con los filtros en query params (estado, fechaInicio, fechaFin).
+ * @param {Response} res - La respuesta HTTP con la lista de expedientes que cumplen los filtros.
+ */
 export const generarReporteExpedientes = async (
   req: Request,
   res: Response
@@ -207,6 +238,11 @@ export const generarReporteExpedientes = async (
   }
 }
 
+/**
+ * Obtiene un expediente por su ID, incluyendo sus indicios y técnico asociado.
+ * @param {Request} req - La solicitud HTTP con el ID del expediente en los parámetros.
+ * @param {Response} res - La respuesta HTTP con los datos del expediente o un error si no existe.
+ */
 export const obtenerExpedientePorId = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id)
 
