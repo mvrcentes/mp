@@ -1,0 +1,347 @@
+{
+	"info": {
+		"_postman_id": "8f7d8d8f-1a32-4d5a-b6fa-9f7ca06f2a82",
+		"name": "MP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37260798"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "registro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// {\n//   \"email\": \"tecnico@example.com\",\n//   \"name\": \"Técnico Prueba\",\n//   \"password\": \"tecnico123\",\n//   \"role\": \"TECNICO\"\n// }\n\n{\n  \"email\": \"coordinador@example.com\",\n  \"name\": \"Coordinador Prueba\",\n  \"password\": \"coordinador123\",\n  \"role\": \"COORDINADOR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// {\n//   \"email\": \"tecnico@example.com\",\n//   \"password\": \"tecnico123\"\n// }\n\n{\n  \"email\": \"coordinador@example.com\",\n  \"password\": \"coordinador123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "expedientes",
+			"item": [
+				{
+					"name": "coordinador",
+					"item": [
+						{
+							"name": "expedientes pendientes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/expedientes/pendientes",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"expedientes",
+										"pendientes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "aprobar un expediente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/expedientes/1/aprobar",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"expedientes",
+										"1",
+										"aprobar"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "rechazar un expediente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"justificacion\": \"No cumple con los requisitos de documentación\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/expedientes/2/rechazar",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"expedientes",
+										"2",
+										"rechazar"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "tecnico",
+					"item": [
+						{
+							"name": "crear expediente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"indicios\": [\n    {\n      \"descripcion\": \"Navaja metálica\",\n      \"color\": \"Plateado\",\n      \"tamano\": \"Pequeño\",\n      \"peso\": 0.2,\n      \"ubicacion\": \"Mesa del comedor\"\n    },\n    {\n      \"descripcion\": \"Bolsa plástica\",\n      \"color\": \"Negra\",\n      \"tamano\": \"Mediano\",\n      \"peso\": 0.5,\n      \"ubicacion\": \"Baño\"\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/expedientes",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"expedientes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar expediente",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/indicios/editar/4/indicio/4",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"indicios",
+										"editar",
+										"4",
+										"indicio",
+										"4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "reporte de expedientes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/expedientes/reportes?estado=APROBADO&fechaInicio=2025-07-01&fechaFin=2025-07-31",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"expedientes",
+								"reportes"
+							],
+							"query": [
+								{
+									"key": "estado",
+									"value": "APROBADO"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2025-07-01"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2025-07-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "expedientes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/expedientes/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"expedientes",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		}
+	]
+}
