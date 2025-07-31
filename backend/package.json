@@ -4,25 +4,30 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src",
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "@prisma/adapter-mssql": "^6.12.0",
     "@prisma/client": "5.13.0",
     "@types/cors": "^2.8.19",
+    "@types/jest": "^30.0.0",
     "@types/mssql": "^9.1.7",
     "argon2": "^0.43.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "i": "^0.3.7",
+    "jest": "^30.0.5",
     "jsonwebtoken": "^9.0.2",
     "mssql": "^11.0.1",
-    "prisma": "5.13.0"
+    "prisma": "5.13.0",
+    "ts-jest": "^29.4.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "bun-types": "^1.2.19",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
