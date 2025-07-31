@@ -45,7 +45,10 @@ router.post(
 
       res.status(201).json({ message: "Usuario registrado", user })
     } catch (err) {
-      res.status(400).json({ error: "Error al registrar usuario" })
+      console.error("ERROR REGISTRO:", err)
+      res
+        .status(400)
+        .json({ error: "Error al registrar usuario", detalle: err })
     }
   }
 )

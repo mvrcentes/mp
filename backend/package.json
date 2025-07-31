@@ -3,14 +3,19 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src"
+    "dev": "tsx watch src",
+    "start": "tsx src/index.ts"
   },
   "dependencies": {
     "@prisma/adapter-mssql": "^6.12.0",
     "@prisma/client": "5.13.0",
+    "@types/cors": "^2.8.19",
+    "@types/mssql": "^9.1.7",
     "argon2": "^0.43.1",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
+    "i": "^0.3.7",
     "jsonwebtoken": "^9.0.2",
     "mssql": "^11.0.1",
     "prisma": "5.13.0"

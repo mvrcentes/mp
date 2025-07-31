@@ -1,69 +1,19 @@
 import { Router } from "express"
-import { prisma } from "../database"
 import { requireAuth } from "../middleware/auth"
 import { authorizeRole } from "../middleware/authorizeRole"
+import {
+  crearExpediente,
+  obtenerExpedientesPendientes,
+  aprobarExpediente,
+  rechazarExpediente,
+  obtenerExpedientes,
+  generarReporteExpedientes,
+  obtenerExpedientePorId,
+} from "../controllers/expedientes.controller"
 
 const router = Router()
 
-/**
- * @route POST /api/expedientes
- * @description Crea un nuevo expediente junto con sus indicios.
- * @access Privado (TECNICO)
- * @param {Array} indicios - Lista de objetos con los campos: descripcion, color, tamano, peso, ubicacion.
- * @returns {201} Objeto del expediente creado con los indicios.
- * @returns {400} Si los indicios no son válidos.
- * @returns {500} Error interno del servidor.
- */
-router.post("/", requireAuth, authorizeRole("TECNICO"), async (req, res) => {
-  const { indicios } = req.body
-
-  if (!Array.isArray(indicios) || indicios.length === 0) {
-    return res.status(400).json({ error: "Debes enviar al menos un indicio" })
-  }
-
-  const indiciosValidos = indicios.every(
-    (indicio) =>
-      indicio.descripcion &&
-      indicio.color &&
-      indicio.tamano &&
-      typeof indicio.peso === "number" &&
-      indicio.ubicacion
-  )
-
-  if (!indiciosValidos) {
-    return res
-      .status(400)
-      .json({ error: "Todos los indicios deben tener los campos requeridos" })
-  }
-
-  try {
-    const expediente = await prisma.expediente.create({
-      data: {
-        tecnicoId: req.user!.id,
-        fecha: new Date(),
-        indicios: {
-          create: indicios.map((indicio) => ({
-            descripcion: indicio.descripcion,
-            color: indicio.color,
-            tamano: indicio.tamano,
-            peso: indicio.peso,
-            ubicacion: indicio.ubicacion,
-          })),
-        },
-      },
-      include: {
-        indicios: true,
-      },
-    })
-
-    res
-      .status(201)
-      .json({ message: "Expediente creado con indicios", expediente })
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Error al crear expediente con indicios" })
-  }
-})
+router.post("/", requireAuth, authorizeRole("TECNICO"), crearExpediente)
 
 /**
  * @route GET /api/expedientes/pendientes
@@ -76,32 +26,7 @@ router.get(
   "/pendientes",
   requireAuth,
   authorizeRole("COORDINADOR"),
-  async (req, res) => {
-    try {
-      const expedientes = await prisma.expediente.findMany({
-        where: {
-          estado: "PENDIENTE",
-        },
-        include: {
-          tecnico: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          indicios: true,
-        },
-        orderBy: {
-          fecha: "desc",
-        },
-      })
-      res.status(200).json({ expedientes })
-    } catch (err) {
-      console.error(err)
-      res.status(500).json({ error: "Error al obtener expedientes pendientes" })
-    }
-  }
+  obtenerExpedientesPendientes
 )
 
 /**
@@ -116,21 +41,7 @@ router.patch(
   "/:id/aprobar",
   requireAuth,
   authorizeRole("COORDINADOR"),
-  async (req, res) => {
-    const expedienteId = parseInt(req.params.id)
-
-    try {
-      const expediente = await prisma.expediente.update({
-        where: { id: expedienteId },
-        data: { estado: "APROBADO" },
-      })
-
-      res.status(200).json({ message: "Expediente aprobado", expediente })
-    } catch (err) {
-      console.error(err)
-      res.status(500).json({ error: "Error al aprobar expediente" })
-    }
-  }
+  aprobarExpediente
 )
 
 /**
@@ -147,33 +58,7 @@ router.patch(
   "/:id/rechazar",
   requireAuth,
   authorizeRole("COORDINADOR"),
-  async (req, res) => {
-    const expedienteId = parseInt(req.params.id)
-    const { justificacion } = req.body
-
-    if (!justificacion) {
-      return res.status(400).json({
-        error: "La justificación es requerida para rechazar un expediente",
-      })
-    }
-
-    try {
-      const expediente = await prisma.expediente.update({
-        where: { id: expedienteId },
-        data: {
-          estado: "RECHAZADO",
-          justificacion,
-        },
-      })
-
-      res
-        .status(200)
-        .json({ message: "Expediente rechazado con justificación", expediente })
-    } catch (err) {
-      console.error(err)
-      res.status(500).json({ error: "Error al rechazar expediente" })
-    }
-  }
+  rechazarExpediente
 )
 
 /**
@@ -183,34 +68,7 @@ router.patch(
  * @returns {200} Lista de expedientes.
  * @returns {500} Error interno al obtener expedientes.
  */
-router.get("/", requireAuth, async (req, res) => {
-  try {
-    const filtros =
-      req.user!.role === "TECNICO" ? { tecnicoId: req.user!.id } : {}
-
-    const expedientes = await prisma.expediente.findMany({
-      where: filtros,
-      include: {
-        tecnico: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        indicios: true,
-      },
-      orderBy: {
-        fecha: "desc",
-      },
-    })
-
-    res.status(200).json({ expedientes })
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Error al obtener expedientes" })
-  }
-})
+router.get("/", requireAuth, obtenerExpedientes)
 
 /**
  * @route GET /api/expedientes/reportes
@@ -222,50 +80,8 @@ router.get("/", requireAuth, async (req, res) => {
  * @returns {200} Lista filtrada de expedientes.
  * @returns {500} Error interno al generar reporte.
  */
-router.get("/reportes", requireAuth, async (req, res) => {
-  const { estado, fechaInicio, fechaFin } = req.query
+router.get("/reportes", requireAuth, generarReporteExpedientes)
 
-  const filtros: any = {}
-
-  if (estado && typeof estado === "string") {
-    filtros.estado = estado
-  }
-
-  if (
-    fechaInicio &&
-    fechaFin &&
-    typeof fechaInicio === "string" &&
-    typeof fechaFin === "string"
-  ) {
-    filtros.fecha = {
-      gte: new Date(fechaInicio),
-      lte: new Date(fechaFin),
-    }
-  }
-
-  try {
-    const expedientes = await prisma.expediente.findMany({
-      where: filtros,
-      include: {
-        tecnico: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        indicios: true,
-      },
-      orderBy: {
-        fecha: "desc",
-      },
-    })
-
-    res.status(200).json({ expedientes })
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Error al generar el reporte" })
-  }
-})
+router.get("/:id", requireAuth, obtenerExpedientePorId)
 
 export default router
